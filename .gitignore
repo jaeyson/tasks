@@ -35,3 +35,5 @@ tasks-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Ignore local shape logs
+persistent

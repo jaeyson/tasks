@@ -2,4 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application CSS */
+#app {
+  @apply bg-zinc-900 text-zinc-200 h-dvh;
+}
+
+h3 {
+  @apply bg-zinc-950 text-zinc-100 p-8 text-xl;
+}
