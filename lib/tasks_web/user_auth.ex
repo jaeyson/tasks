@@ -213,6 +213,16 @@ defmodule TasksWeb.UserAuth do
     end
   end
 
+  def api_require_authenticated_user(conn, _opts) do
+    if conn.assigns[:current_user] do
+      conn
+    else
+      conn
+      |> send_resp(401, "Unauthorized")
+      |> halt()
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

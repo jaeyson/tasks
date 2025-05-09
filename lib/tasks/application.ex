@@ -17,7 +17,7 @@ defmodule Tasks.Application do
       # Start a worker by calling: Tasks.Worker.start_link(arg)
       # {Tasks.Worker, arg},
       # Start to serve requests, typically the last entry
-      TasksWeb.Endpoint
+      {TasksWeb.Endpoint, phoenix_sync: Phoenix.Sync.plug_opts()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

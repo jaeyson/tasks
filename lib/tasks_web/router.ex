@@ -1,6 +1,7 @@
 defmodule TasksWeb.Router do
   use TasksWeb, :router
 
+  # import Phoenix.Sync.Router
   import TasksWeb.UserAuth
 
   pipeline :browser do
@@ -15,6 +16,15 @@ defmodule TasksWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_current_user
+    plug :api_require_authenticated_user
+  end
+
+  scope "/sync" do
+    pipe_through :api
+
+    get "/tasks", TasksWeb.TaskController, :show
   end
 
   scope "/", TasksWeb do
