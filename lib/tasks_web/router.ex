@@ -1,7 +1,7 @@
 defmodule TasksWeb.Router do
   use TasksWeb, :router
 
-  # import Phoenix.Sync.Router
+  import Phoenix.Sync.Router
   import TasksWeb.UserAuth
 
   pipeline :browser do
@@ -25,6 +25,10 @@ defmodule TasksWeb.Router do
     pipe_through :api
 
     get "/tasks", TasksWeb.TaskController, :show
+  end
+
+  scope "/debug" do
+    sync "/tasks", Tasks.Model.Task
   end
 
   scope "/", TasksWeb do
