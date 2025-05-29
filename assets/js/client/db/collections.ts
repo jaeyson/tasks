@@ -1,4 +1,4 @@
-import { Collection, createElectricSync } from '@tanstack/react-optimistic'
+import { createElectricCollection } from '@tanstack/db-collections'
 
 import { stepSchema, taskSchema } from './schema'
 import type { Step, Task } from './schema'
@@ -8,24 +8,35 @@ const relativeUrl = (path) => (
 )
 
 const parser = {
-  timestamptz: (date: string) => new Date(date)
-}
-const syncOpts = {
-  primaryKey: ['id']
+  timestamp: (date: string) => {
+    console.log(date, new Date(date))
+
+    return new Date(date)
+  }
 }
 
-const tasksUrl = relativeUrl('/sync/tasks')
+export const stepCollection = createElectricCollection<Step>({
+  streamOptions: {
+    url: relativeUrl('/sync/steps'),
+    params: {
+      table: 'steps'
+    },
+    parser
+  },
+  primaryKey: ['id'],
+  schema: stepSchema
+})
 
-export const taskCollection = new Collection<Task>({
-  id: 'tasks',
-  sync: createElectricSync({ url: tasksUrl, parser}, syncOpts),
+export const taskCollection = createElectricCollection<Task>({
+  streamOptions: {
+    url: relativeUrl('/sync/tasks'),
+    params: {
+      table: 'tasks'
+    },
+    parser
+  },
+  primaryKey: ['id'],
   schema: taskSchema
 })
 
-// const stepsUrl = relativeUrl('/sync/steps')
-
-// export const stepCollection = new Collection<Step>({
-//   id: 'tasks',
-//   sync: createElectricSync({ url: stepsUrl, parser}, syncOpts),
-//   schema: stepSchema
-// })
+window.taskCollection = taskCollection

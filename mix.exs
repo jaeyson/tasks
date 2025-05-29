@@ -59,8 +59,10 @@ defmodule Tasks.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       # Additional deps
-      {:electric, override: true, path: "../../../electric/packages/sync-service"},
-      {:phoenix_sync, path: "../../../phoenix_sync"}
+      {:electric, "~> 1.0.7"},
+      {:igniter, "~> 0.5", only: [:dev]},
+      {:oban, "~> 2.19"},
+      {:phoenix_sync, file: "../../electric-sql/phoenix_sync"}
     ]
   end
 

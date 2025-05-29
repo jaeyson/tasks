@@ -32,7 +32,7 @@ defmodule Tasks.ModelFixtures do
       attrs
       |> Enum.into(%{
         name: "some name",
-        status: :pending,
+        status: :pending
       })
       |> Map.put(:task_id, task_id)
       |> Model.create_step()

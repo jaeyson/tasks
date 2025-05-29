@@ -1,7 +1,6 @@
 defmodule TasksWeb.Router do
   use TasksWeb, :router
 
-  import Phoenix.Sync.Router
   import TasksWeb.UserAuth
 
   pipeline :browser do
@@ -18,17 +17,20 @@ defmodule TasksWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_session
     plug :fetch_current_user
-    plug :api_require_authenticated_user
+    # plug :api_require_authenticated_user
   end
 
   scope "/sync" do
     pipe_through :api
 
+    get "/steps", TasksWeb.StepController, :show
     get "/tasks", TasksWeb.TaskController, :show
   end
 
-  scope "/debug" do
-    sync "/tasks", Tasks.Model.Task
+  scope "/ingest" do
+    pipe_through :api
+
+    post "/mutations", TasksWeb.IngestController, :create
   end
 
   scope "/", TasksWeb do
@@ -44,7 +46,6 @@ defmodule TasksWeb.Router do
 
   # Enable Swoosh mailbox preview in development
   if Application.compile_env(:tasks, :dev_routes) do
-
     scope "/dev" do
       pipe_through :browser
 

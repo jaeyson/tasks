@@ -11,6 +11,7 @@ defmodule Tasks.Application do
       TasksWeb.Telemetry,
       Tasks.Repo,
       {DNSCluster, query: Application.get_env(:tasks, :dns_cluster_query) || :ignore},
+      {Oban, Application.fetch_env!(:tasks, Oban)},
       {Phoenix.PubSub, name: Tasks.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Tasks.Finch},

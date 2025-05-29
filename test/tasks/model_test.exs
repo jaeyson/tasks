@@ -9,7 +9,7 @@ defmodule Tasks.ModelTest do
   describe "tasks" do
     alias Tasks.Model.Task
 
-    @invalid_attrs %{status: nil, description: nil, title: nil}
+    @invalid_attrs %{description: nil, title: nil}
 
     setup do
       %{user: user_fixture()}
@@ -27,14 +27,12 @@ defmodule Tasks.ModelTest do
 
     test "create_task/1 with valid data creates a task", %{user: user} do
       valid_attrs = %{
-        status: :pending,
         description: "some description",
         title: "some title",
         user_id: user.id
       }
 
       assert {:ok, %Task{} = task} = Model.create_task(valid_attrs)
-      assert task.status == :pending
       assert task.description == "some description"
       assert task.title == "some title"
       assert task.user_id == user.id
@@ -46,10 +44,9 @@ defmodule Tasks.ModelTest do
 
     test "update_task/2 with valid data updates the task", %{user: user} do
       task = task_fixture(user)
-      update_attrs = %{status: :started, description: "some updated description", title: "some updated title"}
+      update_attrs = %{description: "some updated description", title: "some updated title"}
 
       assert {:ok, %Task{} = task} = Model.update_task(task, update_attrs)
-      assert task.status == :started
       assert task.description == "some updated description"
       assert task.title == "some updated title"
     end
@@ -75,7 +72,7 @@ defmodule Tasks.ModelTest do
   describe "steps" do
     alias Tasks.Model.Step
 
-    @invalid_attrs %{name: nil, status: nil}
+    @invalid_attrs %{name: nil, order: nil, status: nil}
 
     setup do
       %{task: task_fixture(user_fixture())}
@@ -94,12 +91,14 @@ defmodule Tasks.ModelTest do
     test "create_step/1 with valid data creates a step", %{task: task} do
       valid_attrs = %{
         name: "some name",
+        order: 100,
         status: :pending,
         task_id: task.id
       }
 
       assert {:ok, %Step{} = step} = Model.create_step(valid_attrs)
       assert step.name == "some name"
+      assert step.order == 100
       assert step.status == :pending
       assert step.task_id == task.id
     end
@@ -110,10 +109,11 @@ defmodule Tasks.ModelTest do
 
     test "update_step/2 with valid data updates the step", %{task: task} do
       step = step_fixture(task)
-      update_attrs = %{name: "some updated name", status: :started}
+      update_attrs = %{name: "some updated name", order: 200, status: :started}
 
       assert {:ok, %Step{} = step} = Model.update_step(step, update_attrs)
       assert step.name == "some updated name"
+      assert step.order == 200
       assert step.status == :started
     end
 

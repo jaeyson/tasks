@@ -11,9 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "@electric-sql/react": "^1.0.4",
-    "@tanstack/react-optimistic": "^0.0.3",
+    "@tanstack/db-collections": "^0.0.3",
+    "@tanstack/react-db": "^0.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "uuid4": "^2.0.3",
     "zod": "^3.24.4"
   },
   "devDependencies": {

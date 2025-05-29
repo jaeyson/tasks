@@ -6,7 +6,6 @@ defmodule Tasks.Repo.Migrations.CreateTasks do
       add :id, :binary_id, primary_key: true
       add :title, :string, null: false
       add :description, :string
-      add :status, :string, null: false
       add :user_id, references(:users, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps(type: :utc_datetime)

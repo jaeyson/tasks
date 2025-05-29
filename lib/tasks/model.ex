@@ -6,6 +6,7 @@ defmodule Tasks.Model do
   import Ecto.Query, warn: false
   alias Tasks.Repo
 
+  alias Tasks.Accounts
   alias Tasks.Model.Task
 
   @doc """
@@ -38,6 +39,32 @@ defmodule Tasks.Model do
   def get_task!(id), do: Repo.get!(Task, id)
 
   @doc """
+  Loads a task by user and params. As long as the task belongs to the user.
+
+      iex> load_task(user, %{"id" => 1234})
+      %Task{}
+
+      iex> load_task(wrong_user, %{"id" => 1234})
+      nil
+
+  Returns the struct or nil.
+  """
+  def load_task(%Accounts.User{id: user_id}, %{"id" => id}) do
+    Repo.one(from t in Task, where: t.id == ^id and t.user_id == ^user_id)
+  end
+
+  def current_task_ids(%Accounts.User{id: user_id}) do
+    IO.inspect(:current_task_ids)
+
+    Repo.all(
+      from t in Task,
+        select: t.id,
+        where: t.user_id == ^user_id
+    )
+    |> IO.inspect()
+  end
+
+  @doc """
   Creates a task.
 
   ## Examples
@@ -53,6 +80,20 @@ defmodule Tasks.Model do
     %Task{}
     |> Task.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def ingest_task_changeset(%Accounts.User{id: user_id}, %Task{} = task, attrs, :insert) do
+    IO.inspect({:ingest_task_changeset, 111, task, attrs})
+
+    attrs = Map.put(attrs, "user_id", user_id)
+
+    Task.changeset(task, attrs)
+  end
+
+  def ingest_task_changeset(_user, %Task{} = task, attrs, _operation) do
+    IO.inspect({:ingest_task_changeset, 222, task, attrs})
+
+    Task.changeset(task, attrs)
   end
 
   @doc """
@@ -132,6 +173,39 @@ defmodule Tasks.Model do
 
   """
   def get_step!(id), do: Repo.get!(Step, id)
+
+  @doc """
+  Loads a step by user and params, as long as the step belongs to
+  a task which belongs to the user.
+
+      iex> load_step(user, %{"id" => 1234})
+      %Step{}
+
+      iex> load_step(wrong_user, %{"id" => 1234})
+      nil
+
+  Returns the struct or nil.
+  """
+  def load_step(%Accounts.User{id: user_id}, %{"id" => id}) do
+    Repo.one(
+      from s in Step,
+        join: t in Task,
+        on: t.id == s.task_id,
+        where: s.id == ^id and t.user_id == ^user_id
+    )
+  end
+
+  # Get the first two non-completed steps
+  def get_next_step(task_id) when is_binary(task_id) do
+    Repo.one(
+      from s in Step,
+        where:
+          s.task_id == ^task_id and
+            (s.status == :pending or s.status == :started),
+        order_by: s.order,
+        limit: 1
+    )
+  end
 
   @doc """
   Creates a step.
